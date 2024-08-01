@@ -1,7 +1,6 @@
-# Analysis-Project
-A short E-Commerce Data Analysis Project
+# eCommerce Data Analysis Project
 
-This project involves an in-depth analysis of an eCommerce data to uncover the most purchased items, identify trends, and discover valuable insights. The analysis focuses on understanding the purchasing behavior and revenue patterns of specific items within the dataset.
+This project involves an in-depth analysis of eCommerce data to uncover the most purchased items, identify trends, and discover valuable insights. The analysis focuses on understanding the purchasing behavior and revenue patterns of specific items within the dataset.
 
 ## Table of Contents
 
@@ -91,6 +90,9 @@ FROM (
 ORDER BY YearlyRevenue DESC
 LIMIT 10
 '''
+df_top_items = pd.read_sql_query(query, conn)
+print(df_top_items)
+```
 
 ### Monthly Revenue Trends
 
@@ -105,19 +107,13 @@ GROUP BY Month, Description
 ORDER BY Month
 '''
 df_monthly_trends = pd.read_sql_query(query, conn)
+print(df_monthly_trends)
 ```
 
 ## Visualizations
 
 Create visualizations to present the findings. For example, to visualize the monthly revenue trends of "PARTY BUNTING" and "DOTCOM POSTAGE":
 
-query = '''
-SELECT SUM(Total) AS 'Total_Sum', Month, Description 
-FROM retail 
-WHERE Description IN ('PARTY BUNTING', 'DOTCOM POSTAGE')
-GROUP BY Month, Description
-'''
-df = pd.read_sql_query(query, conn)
 ```python
 # Pivot and melt the data for plotting
 df_pivot = df_monthly_trends.pivot(index='Month', columns='Description', values='Total_Sum').reset_index()
@@ -138,5 +134,3 @@ plt.show()
 ## Conclusion
 
 This project demonstrates how to perform an eCommerce analysis to identify the most purchased items and trends. The insights gained from this analysis can help businesses understand customer behavior, optimize inventory, and improve revenue generation strategies.
-
-
