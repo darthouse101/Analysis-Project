@@ -73,15 +73,24 @@ Identify the most purchased items and calculate the total quantity and revenue g
 
 ```python
 query = '''
-SELECT Description, SUM(Quantity) AS TotalQuantity, ROUND(SUM(Quantity * UnitPrice), 2) AS TotalRevenue
-FROM retail
-GROUP BY Description
-ORDER BY TotalQuantity DESC
+SELECT 
+    StockCode,
+    Description,
+    TotalQuantity,
+    UnitPrice,
+    ROUND(TotalQuantity * UnitPrice, 2) AS YearlyRevenue
+FROM (
+    SELECT 
+        StockCode,
+        Description,
+        SUM(Quantity) AS TotalQuantity,
+        UnitPrice
+    FROM retail
+    GROUP BY StockCode
+)
+ORDER BY YearlyRevenue DESC
 LIMIT 10
 '''
-df_top_items = pd.read_sql_query(query, conn)
-print(df_top_items)
-```
 
 ### Monthly Revenue Trends
 
@@ -102,6 +111,13 @@ df_monthly_trends = pd.read_sql_query(query, conn)
 
 Create visualizations to present the findings. For example, to visualize the monthly revenue trends of "PARTY BUNTING" and "DOTCOM POSTAGE":
 
+query = '''
+SELECT SUM(Total) AS 'Total_Sum', Month, Description 
+FROM retail 
+WHERE Description IN ('PARTY BUNTING', 'DOTCOM POSTAGE')
+GROUP BY Month, Description
+'''
+df = pd.read_sql_query(query, conn)
 ```python
 # Pivot and melt the data for plotting
 df_pivot = df_monthly_trends.pivot(index='Month', columns='Description', values='Total_Sum').reset_index()
@@ -123,10 +139,4 @@ plt.show()
 
 This project demonstrates how to perform an eCommerce analysis to identify the most purchased items and trends. The insights gained from this analysis can help businesses understand customer behavior, optimize inventory, and improve revenue generation strategies.
 
-## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-Feel free to customize the README file further based on your specific requirements and add any additional sections or details that you think are necessary.
